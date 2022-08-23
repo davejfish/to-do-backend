@@ -31,11 +31,17 @@ describe('tests for todo routes', () => {
   });
   
   it('#POST should create a todo for the current user', async () => {
-    const [agent] = registerAndSignIn();
-    const response = agent.post('api/v1/todo').send({
+    const [agent, user] = await registerAndSignIn();
+    const response = await agent.post('/api/v1/todos').send({
       content: 'finish this app'
     });
     expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      id: expect.any(String),
+      user_id: user.id,
+      content: 'finish this app',
+      finished: false,
+    });
   });
   
   afterAll(() => {
