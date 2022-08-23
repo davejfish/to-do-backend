@@ -8,22 +8,22 @@ const testUser = {
   password: '123456'
 };
 
-const registerAndSignIn = async (props = {}) => {
-  const mockUser = {
-    ...testUser,
-    ...props
-  };
+// const registerAndSignIn = async (props = {}) => {
+//   const mockUser = {
+//     ...testUser,
+//     ...props
+//   };
 
-  const agent = request.agent(app);
+//   const agent = request.agent(app);
 
-  const response = await agent
-    .post('/api/v1/user/sessions')
-    .send(mockUser);
+//   const response = await agent
+//     .post('/api/v1/user/sessions')
+//     .send(mockUser);
   
-  const user = response.body;
+//   const user = response.body;
   
-  return [agent, user];
-};
+//   return [agent, user];
+// };
 
 describe('tests for user routes', () => {
   beforeEach(() => {
