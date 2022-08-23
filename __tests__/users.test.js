@@ -52,9 +52,9 @@ describe('tests for user routes', () => {
   });
 
   it('#DELETE /api/v1/user/session should delete a cookie', async () => {
-    const [agent] = registerAndSignIn();
+    const [agent] = await registerAndSignIn();
     let response = await agent.delete('/api/v1/user/sessions');
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(204);
     response = await agent.get('/api/v1/user/me');
     expect(response.status).toBe(401);
   });
