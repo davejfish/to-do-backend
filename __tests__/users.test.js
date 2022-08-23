@@ -2,7 +2,6 @@ const pool = require('../lib/utils/pool');
 const setup = require('../data/setup');
 const request = require('supertest');
 const app = require('../lib/app');
-const { template } = require('@babel/core');
 
 const testUser = {
   email: 'test@exmaple.com',
@@ -50,6 +49,14 @@ describe('tests for user routes', () => {
       exp: expect.any(Number),
       iat: expect.any(Number),
     });
+  });
+
+  it('#DELETE /api/v1/user/session should delete a cookie', async () => {
+    const [agent] = registerAndSignIn();
+    let response = await agent.delete('/api/v1/user/sessions');
+    expect(response.status).toBe(200);
+    response = await agent.get('/api/v1/user/me');
+    expect(response.status).toBe(401);
   });
   
   afterAll(() => {
