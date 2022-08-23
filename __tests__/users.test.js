@@ -13,7 +13,7 @@ const registerAndSignIn = async (props = {}) => {
     ...testUser,
     ...props
   };
-  
+
   const agent = request.agent(app);
 
   const response = await agent
@@ -31,8 +31,12 @@ describe('tests for user routes', () => {
   });
   
   it('#POST api/v1/user/sessions should create and sign in a new user', async () => {
-    const response = await registerAndSignIn();
+    const response = await request(app).post('/api/v1/user/sessions').send(testUser);
     expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      id: expect.any(String),
+      email: 'test@exmaple.com',
+    });
   });
   
   afterAll(() => {
