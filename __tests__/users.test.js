@@ -2,28 +2,29 @@ const pool = require('../lib/utils/pool');
 const setup = require('../data/setup');
 const request = require('supertest');
 const app = require('../lib/app');
+const { template } = require('@babel/core');
 
 const testUser = {
   email: 'test@exmaple.com',
   password: '123456'
 };
 
-// const registerAndSignIn = async (props = {}) => {
-//   const mockUser = {
-//     ...testUser,
-//     ...props
-//   };
+const registerAndSignIn = async (props = {}) => {
+  const mockUser = {
+    ...testUser,
+    ...props
+  };
 
-//   const agent = request.agent(app);
+  const agent = request.agent(app);
 
-//   const response = await agent
-//     .post('/api/v1/user/sessions')
-//     .send(mockUser);
+  const response = await agent
+    .post('/api/v1/user/sessions')
+    .send(mockUser);
   
-//   const user = response.body;
+  const user = response.body;
   
-//   return [agent, user];
-// };
+  return [agent, user];
+};
 
 describe('tests for user routes', () => {
   beforeEach(() => {
@@ -36,6 +37,18 @@ describe('tests for user routes', () => {
     expect(response.body).toEqual({
       id: expect.any(String),
       email: 'test@exmaple.com',
+    });
+  });
+
+  it('#GET api/v1/user/me should return the current user', async () => {
+    const [agent, user] = await registerAndSignIn();
+    const response = await agent.get('/api/v1/user/me');
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      ...user,
+      exp: expect.any(Number),
+      iat: expect.any(Number),
     });
   });
   
