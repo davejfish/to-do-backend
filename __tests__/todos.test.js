@@ -72,11 +72,11 @@ describe('tests for todo routes', () => {
   it('#DELETE /api/v1/todos/:id should delete a todo', async () => {
     const [agent] = await registerAndSignIn();
     const todo = await agent.post('/api/v1/todos').send({ content: 'test' });
-    let response = await agent.delete(`/api/v1/todos/${todo.id}`);
+    let response = await agent.delete(`/api/v1/todos/${todo.body.id}`);
     expect(response.status).toBe(200);
 
-    response = await agent.get(`/api/v1/todos/${todo.id}`);
-    expect(response.status).toBe(404);
+    response = await agent.get(`/api/v1/todos/${todo.body.id}`);
+    expect(response.body).toEqual(null);
   });
   
   afterAll(() => {
