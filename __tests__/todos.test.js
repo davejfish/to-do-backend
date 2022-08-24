@@ -43,6 +43,23 @@ describe('tests for todo routes', () => {
       finished: false,
     });
   });
+
+  it('#GET /api/v1/todos should get all todos for a user', async () => {
+    const [agent, user] = await registerAndSignIn();
+    await agent.post('/api/v1/todos').send({
+      content: 'test',
+    });
+
+    const response = await agent.get('/api/v1/todos');
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      id: expect.any(String),
+      user_id: user.id,
+      content: 'test',
+      finished: false,
+    });
+
+  });
   
   afterAll(() => {
     pool.end();
