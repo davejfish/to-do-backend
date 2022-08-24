@@ -58,7 +58,15 @@ describe('tests for todo routes', () => {
       content: 'test',
       finished: false,
     });
+  });
 
+  it('#PUT /api/v1/todos/:id should update an existing todo', async () => {
+    const [agent, user] = await registerAndSignIn();
+    const todo = await agent.post('api/v1/todos').send({ content: 'here is a todo' });
+    const response = await agent.put(`api/v1/todos/${todo.id}`).send({ finished: true });
+
+    expect(response.status).toBe(200);
+    expect(response.body.finished).toEqual(true);
   });
   
   afterAll(() => {
