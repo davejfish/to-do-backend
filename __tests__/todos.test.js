@@ -31,6 +31,11 @@ describe('tests for todo routes', () => {
   });
   
   it('#POST should create a todo for the current user', async () => {
+    const failure = await request(app).post('/api/v1/todos').send({
+      content: 'finish this app'
+    });
+    expect(failure.status).toBe(401);
+
     const [agent, user] = await registerAndSignIn();
     const response = await agent.post('/api/v1/todos').send({
       content: 'finish this app'
@@ -45,6 +50,9 @@ describe('tests for todo routes', () => {
   });
 
   it('#GET /api/v1/todos should get all todos for a user', async () => {
+    const failure = await request(app).get('/api/v1/todos');
+    expect(failure.status).toBe(401);
+
     const [agent, user] = await registerAndSignIn();
     await agent.post('/api/v1/todos').send({
       content: 'test',
@@ -61,8 +69,21 @@ describe('tests for todo routes', () => {
   });
 
   it('#PUT /api/v1/todos/:id should update an existing todo', async () => {
+
     const [agent] = await registerAndSignIn();
     const todo = await agent.post('/api/v1/todos').send({ content: 'here is a todo' });
+
+    const failure = await request(app).put(`/api/v1/todos/${todo.body.id}`);
+    expect(failure.status).toBe(401);
+
+    const agentTwo = request.agent(app);
+    await agentTwo.post('/api/v1/user/sessions').send({
+      email: '403@unauthorized.com',
+      password: '123456'
+    });
+    const anotherFailure = await agentTwo.put(`/api/v1/todos/${todo.body.id}`).send({ finished: true });
+    expect(anotherFailure.status).toBe(403);
+
     const response = await agent.put(`/api/v1/todos/${todo.body.id}`).send({ finished: true });
 
     expect(response.status).toBe(200);
@@ -72,6 +93,11 @@ describe('tests for todo routes', () => {
   it('#DELETE /api/v1/todos/:id should delete a todo', async () => {
     const [agent] = await registerAndSignIn();
     const todo = await agent.post('/api/v1/todos').send({ content: 'test' });
+
+    const failure = await request(app).delete(`/api/v1/todos/${todo.body.id}`);
+    expect(failure.status).toBe(401);
+
+
     let response = await agent.delete(`/api/v1/todos/${todo.body.id}`);
     expect(response.status).toBe(200);
 
