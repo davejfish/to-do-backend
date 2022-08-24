@@ -52,18 +52,18 @@ describe('tests for todo routes', () => {
 
     const response = await agent.get('/api/v1/todos');
     expect(response.status).toBe(200);
-    expect(response.body).toEqual({
+    expect(response.body).toEqual([{
       id: expect.any(String),
       user_id: user.id,
       content: 'test',
       finished: false,
-    });
+    }]);
   });
 
   it('#PUT /api/v1/todos/:id should update an existing todo', async () => {
-    const [agent, user] = await registerAndSignIn();
-    const todo = await agent.post('api/v1/todos').send({ content: 'here is a todo' });
-    const response = await agent.put(`api/v1/todos/${todo.id}`).send({ finished: true });
+    const [agent] = await registerAndSignIn();
+    const todo = await agent.post('/api/v1/todos').send({ content: 'here is a todo' });
+    const response = await agent.put(`/api/v1/todos/${todo.body.id}`).send({ finished: true });
 
     expect(response.status).toBe(200);
     expect(response.body.finished).toEqual(true);
